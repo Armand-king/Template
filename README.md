@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+### NEXT JS
 
-## Getting Started
+pnpx create-next-app@latest
 
-First, run the development server:
+###Commande Prisma
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+pnpm install prisma -D
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+pnpx prisma init
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+pnpx prisma migrate dev --name init
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+pnpm add @prisma/client
 
-## Learn More
+pnpx prisma generate
 
-To learn more about Next.js, take a look at the following resources:
+### AUTRES
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+pnpx prisma migrate dev --name added_model
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+pnpx  prisma migrate reset
 
-## Deploy on Vercel
+pnpx prisma db pull
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Dependance 
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+pnpm install bcryptjs
+
+pnpm install jsonwebtoken
+
+pnpm install @prisma/client @supabase/ssr @supabase/supabase-js dotenv next react react-dom react-hook-form react-hot-toast zod && npm install -D @types/node @types/react @types/react-dom autoprefixer eslint eslint-config-next postcss prisma tailwindcss ts-node typescript
+
+pnpm add @supabase/supabase-js next react react-dom typescript @types/react @types/react-dom tailwindcss uuid && pnpm add -D @types/node @types/uuid
+
+lsof -i :3009
+
+kill -9 41983
+
+### Mes Server
+
+
+// Gestion des erreurs de démarrage du serveur
+const startServer = async () => {
+  try {
+    // Vérifie d'abord la connexion à Supabase
+    const isConnected = await checkSupabaseConnection();
+    if (!isConnected) {
+      console.log('⚠️  Warning: Server starting without Supabase connection');
+    }
+
+    await new Promise((resolve, reject) => {
+      const server = app.listen(port, () => {
+        console.log(`✅ Server is running on port ${port}`);
+        console.log(`📡 API Status:`);
+        console.log(`   - Server: Running`);
+        console.log(`   - Database: ${isConnected ? 'Connected' : 'Disconnected'}`);
+        console.log(`   - Environment: ${process.env.NODE_ENV || 'development'}`);
+        resolve();
+      });
+
+      server.on('error', (error) => {
+        if (error.code === 'EADDRINUSE') {
+          console.error(`❌ Port ${port} is already in use`);
+          console.log('🔄 Trying with a different port...');
+          server.close();
+          const newPort = port + 1;
+          server.listen(newPort);
+        } else {
+          console.error('❌ Server error:', error);
+          reject(error);
+        }
+      });
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+};
+ 
