@@ -2,7 +2,7 @@
 
 pnpx create-next-app@latest
 
-###Commande Prisma
+Commande Prisma
 
 pnpm install prisma -D
 
